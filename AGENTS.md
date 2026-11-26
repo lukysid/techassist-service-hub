@@ -28,3 +28,7 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+## Architecture
+- Data access goes through `src/services/*.service.ts`; each uses `http()` from `api-client.ts` when `VITE_API_URL` is set, else the localStorage mock — swap backends without touching pages.
+- Pages read via React Query options in `src/services/queries.ts`; data routes use `ssr: false` because the mock lives in the browser.
