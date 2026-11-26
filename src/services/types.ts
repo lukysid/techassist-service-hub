@@ -1,5 +1,6 @@
 export interface Cliente {
   id: string;
+  tipo?: "cliente";
   nome: string;
   email: string;
   telefone: string;
@@ -7,11 +8,12 @@ export interface Cliente {
   endereco: string;
   criadoEm: string;
 }
-export type ClienteInput = Omit<Cliente, "id" | "criadoEm">;
+export type ClienteInput = Omit<Cliente, "id" | "criadoEm" | "tipo">;
 
 export type StatusOrdem = "aberta" | "em_andamento" | "aguardando_peca" | "finalizada";
 export interface OrdemServico {
   id: string;
+  tipo?: "ordem";
   numero: number;
   clienteId: string;
   equipamento: string;
@@ -21,7 +23,7 @@ export interface OrdemServico {
   valorEstimado: number;
   criadoEm: string;
 }
-export type OrdemInput = Omit<OrdemServico, "id" | "numero" | "criadoEm">;
+export type OrdemInput = Omit<OrdemServico, "id" | "numero" | "criadoEm" | "tipo">;
 
 export const STATUS_LABEL: Record<StatusOrdem, string> = {
   aberta: "Aberta",
