@@ -3,18 +3,56 @@ import { clientesService } from "./clientes.service";
 import { ordensService } from "./ordens.service";
 import type { ClienteInput, OrdemInput, StatusOrdem } from "./types";
 
-export const clientesQuery = queryOptions({ queryKey: ["clientes"], queryFn: clientesService.listar });
-export const ordensQuery = queryOptions({ queryKey: ["ordens"], queryFn: ordensService.listar });
+export const clientesQuery = queryOptions({
+  queryKey: ["clientes"],
+  queryFn: clientesService.listar,
+});
+
+export const ordensQuery = queryOptions({
+  queryKey: ["ordens"],
+  queryFn: ordensService.listar,
+});
 
 export function useCriarCliente() {
-  const qc = useQueryClient();
-  return useMutation({ mutationFn: (i: ClienteInput) => clientesService.criar(i), onSuccess: () => qc.invalidateQueries({ queryKey: ["clientes"] }) });
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (input: ClienteInput) => clientesService.criar(input),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["clientes"] }),
+  });
 }
+
+export function useRemoverCliente() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => clientesService.remover(id),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["clientes"] }),
+  });
+}
+
 export function useCriarOrdem() {
-  const qc = useQueryClient();
-  return useMutation({ mutationFn: (i: OrdemInput) => ordensService.criar(i), onSuccess: () => qc.invalidateQueries({ queryKey: ["ordens"] }) });
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (input: OrdemInput) => ordensService.criar(input),
+    onSuccess: () => Promise.all([
+      queryClient.invalidateQueries({ queryKey: ["ordens"] }),
+      queryClient.invalidateQueries({ queryKey: ["clientes"] }),
+    ]),
+  });
 }
+
 export function useAtualizarStatus() {
-  const qc = useQueryClient();
-  return useMutation({ mutationFn: (v: { id: string; status: StatusOrdem }) => ordensService.atualizarStatus(v.id, v.status), onSuccess: () => qc.invalidateQueries({ queryKey: ["ordens"] }) });
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (value: { id: string; status: StatusOrdem }) =>
+      ordensService.atualizarStatus(value.id, value.status),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["ordens"] }),
+  });
+}
+
+export function useRemoverOrdem() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => ordensService.remover(id),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["ordens"] }),
+  });
 }
