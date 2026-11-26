@@ -25,9 +25,13 @@ export function ClienteForm({ onDone }: { onDone: () => void }) {
       setErrors(Object.fromEntries(r.error.issues.map((i) => [String(i.path[0]), i.message])));
       return;
     }
-    await criar.mutateAsync(r.data);
-    toast.success("Cliente cadastrado");
-    onDone();
+    try {
+      await criar.mutateAsync(r.data);
+      toast.success("Cliente cadastrado");
+      onDone();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Não foi possível cadastrar o cliente.");
+    }
   }
   const field = (name: Campo, label: string, type = "text", placeholder = "") => (
     <div className="space-y-1.5">
