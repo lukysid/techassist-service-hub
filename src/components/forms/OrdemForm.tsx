@@ -33,9 +33,13 @@ export function OrdemForm({ onDone }: { onDone: () => void }) {
       setErrors(Object.fromEntries(r.error.issues.map((i) => [String(i.path[0]), i.message])));
       return;
     }
-    await criar.mutateAsync(r.data);
-    toast.success("Ordem de serviço criada");
-    onDone();
+    try {
+      await criar.mutateAsync(r.data);
+      toast.success("Ordem de serviço criada");
+      onDone();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Não foi possível criar a ordem de serviço.");
+    }
   }
   const err = (k: string) => (errors[k] ? <p className="text-xs text-destructive">{errors[k]}</p> : null);
 
